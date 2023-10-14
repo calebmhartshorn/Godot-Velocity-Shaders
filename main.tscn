@@ -1,0 +1,186 @@
+[gd_scene load_steps=21 format=3 uid="uid://byprysxvnxikb"]
+
+[ext_resource type="Shader" path="res://velocity_buffer.gdshader" id="1_lievo"]
+[ext_resource type="Texture2D" uid="uid://dfg57ewl22mue" path="res://velocity_mask.png" id="2_muaaa"]
+[ext_resource type="Shader" path="res://velocity_affected.gdshader" id="4_4p2a8"]
+[ext_resource type="Shader" path="res://velocity_buffer_combined.gdshader" id="4_caxi5"]
+[ext_resource type="Texture2D" uid="uid://dhymcqyrac3oq" path="res://grass.png" id="5_n6n75"]
+[ext_resource type="Texture2D" uid="uid://ce6pbuydygtbe" path="res://icon.svg" id="5_n17ad"]
+[ext_resource type="Script" path="res://velocity_affected.gd" id="6_nxpse"]
+[ext_resource type="Script" path="res://Sprite2D2.gd" id="7_m6f2t"]
+[ext_resource type="Script" path="res://velocity_affector.gd" id="8_7wpic"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_l76c4"]
+viewport_path = NodePath("VelocityBuffer/XVelocity2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mmfao"]
+resource_local_to_scene = true
+shader = ExtResource("1_lievo")
+shader_parameter/wind_amount = 0.0
+shader_parameter/wind_frequency = 1.0
+shader_parameter/wind_amplitude = 0.15
+shader_parameter/buffer = SubResource("ViewportTexture_l76c4")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_8i6ow"]
+viewport_path = NodePath("VelocityBuffer/YVelocity2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cyoc3"]
+resource_local_to_scene = true
+shader = ExtResource("1_lievo")
+shader_parameter/wind_amount = 0.0
+shader_parameter/wind_frequency = 1.0
+shader_parameter/wind_amplitude = 0.0
+shader_parameter/buffer = SubResource("ViewportTexture_8i6ow")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ob43d"]
+viewport_path = NodePath("VelocityBuffer/XVelocity")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_t2teu"]
+viewport_path = NodePath("VelocityBuffer/YVelocity")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_rtfwj"]
+viewport_path = NodePath("VelocityBuffer/XVelocity")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_7imif"]
+viewport_path = NodePath("VelocityBuffer/YVelocity")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_72h5q"]
+resource_local_to_scene = true
+shader = ExtResource("4_caxi5")
+shader_parameter/x_texture = SubResource("ViewportTexture_rtfwj")
+shader_parameter/y_texture = SubResource("ViewportTexture_7imif")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ypb8y"]
+viewport_path = NodePath("VelocityBuffer/Velocity")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xqci6"]
+resource_local_to_scene = true
+shader = ExtResource("4_4p2a8")
+shader_parameter/world_uv = Vector2(0.101563, 0.345679)
+shader_parameter/amount = 1.0
+shader_parameter/velocity_buffer = SubResource("ViewportTexture_ypb8y")
+
+[node name="Game" type="Node2D"]
+
+[node name="BG" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0941176, 0.290196, 0.431373, 1)
+
+[node name="VelocityBuffer" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="XVelocity" type="SubViewport" parent="VelocityBuffer"]
+handle_input_locally = false
+size = Vector2i(100, 100)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="VelocityBuffer/XVelocity"]
+material = SubResource("ShaderMaterial_mmfao")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.501961, 0.501961, 1, 1)
+
+[node name="YVelocity" type="SubViewport" parent="VelocityBuffer"]
+handle_input_locally = false
+size = Vector2i(100, 100)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="VelocityBuffer/YVelocity"]
+material = SubResource("ShaderMaterial_cyoc3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.501961, 0.501961, 1, 1)
+
+[node name="XVelocity2" type="SubViewport" parent="VelocityBuffer"]
+handle_input_locally = false
+size = Vector2i(100, 100)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="TextureRect" parent="VelocityBuffer/XVelocity2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_ob43d")
+
+[node name="YVelocity2" type="SubViewport" parent="VelocityBuffer"]
+handle_input_locally = false
+size = Vector2i(100, 100)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="TextureRect" parent="VelocityBuffer/YVelocity2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_t2teu")
+
+[node name="Velocity" type="SubViewport" parent="VelocityBuffer"]
+handle_input_locally = false
+size = Vector2i(100, 100)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="VelocityBuffer/Velocity"]
+material = SubResource("ShaderMaterial_72h5q")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Plants" type="Node2D" parent="."]
+position = Vector2(-50, -50)
+
+[node name="Plant1" type="Sprite2D" parent="Plants"]
+material = SubResource("ShaderMaterial_xqci6")
+position = Vector2(191, 169)
+texture = ExtResource("5_n6n75")
+script = ExtResource("6_nxpse")
+
+[node name="Plant2" type="Sprite2D" parent="Plants"]
+material = SubResource("ShaderMaterial_xqci6")
+position = Vector2(381, 280)
+texture = ExtResource("5_n6n75")
+script = ExtResource("6_nxpse")
+
+[node name="Plant3" type="Sprite2D" parent="Plants"]
+material = SubResource("ShaderMaterial_xqci6")
+position = Vector2(526, 121)
+texture = ExtResource("5_n6n75")
+script = ExtResource("6_nxpse")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+process_priority = -10
+modulate = Color(1, 1, 1, 0.458824)
+position = Vector2(481.581, 256.26)
+scale = Vector2(0.5, 0.5)
+script = ExtResource("7_m6f2t")
+
+[node name="VelocityAffector" type="Sprite2D" parent="Player"]
+texture = ExtResource("2_muaaa")
+script = ExtResource("8_7wpic")
+x_viewport_path = NodePath("../../VelocityBuffer/XVelocity")
+y_viewport_path = NodePath("../../VelocityBuffer/YVelocity")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture = ExtResource("5_n17ad")
